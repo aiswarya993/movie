@@ -1,10 +1,11 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 export const useFetch = (url, customparams = {}) => {
   const [data, setdata] = useState({});
   const [error, seterroe] = useState(null);
   const [loading, setloading] = useState(true);
+  let {page,query}=customparams;
   let options = {
     method: "get",
     url,
@@ -15,6 +16,7 @@ export const useFetch = (url, customparams = {}) => {
       api_key: "e3ef60114f3455d412ea55db83f798b2"
       , ...customparams },
   };
+  let memorizedoption=useMemo(()=>options,[page,query,url])
   const fetchdata = async () => {
     try {
       const { data } = await axios(options);
@@ -28,7 +30,7 @@ export const useFetch = (url, customparams = {}) => {
   };
   useEffect(() => {
     fetchdata();
-  }, [customparams.page,customparams.query,url]);
+  }, [memorizedoption]);
 
   return [data, loading, error];
 };
